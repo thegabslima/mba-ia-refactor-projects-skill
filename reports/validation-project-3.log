@@ -1,0 +1,72 @@
+# Projeto 3 - validação pós-refatoração (python seed.py && python app.py)
+
+## Boot
+ * Serving Flask app 'app'
+ * Debug mode: off
+2026-10-22 18:43:06,295 INFO werkzeug: WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+
+## Endpoints
+GET    / -> 200 ['message', 'version']
+GET    /health -> 200 ['status', 'timestamp']
+GET    /tasks -> 200 list[10]
+GET    /tasks/1 -> 200 ['category_id', 'created_at', 'description', 'due_date', 'id', 'overdue', 'priority', 'status', 'tags', 'title', 'updated_at', 'user_id']
+GET    /tasks/999 -> 404 ['error']
+GET    /tasks/search?q=api&status=pending&priority=3 -> 200 list[1]
+GET    /tasks/stats -> 200 ['cancelled', 'completion_rate', 'done', 'in_progress', 'overdue', 'pending', 'total']
+POST   /tasks -> 201 ['category_id', 'created_at', 'description', 'due_date', 'id', 'priority', 'status', 'tags', 'title', 'updated_at', 'user_id']
+POST   /tasks -> 400 ['error']
+POST   /tasks -> 400 ['error']
+PUT    /tasks/11 -> 200 ['category_id', 'created_at', 'description', 'due_date', 'id', 'priority', 'status', 'tags', 'title', 'updated_at', 'user_id']
+PUT    /tasks/999 -> 404 ['error']
+DELETE /tasks/11 -> 200 ['message']
+DELETE /tasks/999 -> 404 ['error']
+GET    /users -> 200 list[3]
+GET    /users/1 -> 200 ['active', 'created_at', 'email', 'id', 'name', 'role', 'tasks']
+GET    /users/999 -> 404 ['error']
+GET    /users/1/tasks -> 200 list[4]
+POST   /users -> 201 ['active', 'created_at', 'email', 'id', 'name', 'role']
+POST   /users -> 409 ['error']
+POST   /users -> 400 ['error']
+PUT    /users/4 -> 200 ['active', 'created_at', 'email', 'id', 'name', 'role']
+POST   /login -> 200 ['message', 'token', 'user']
+POST   /login -> 401 ['error']
+DELETE /users/4 -> 200 ['message']
+DELETE /users/999 -> 404 ['error']
+GET    /reports/summary -> 200 ['generated_at', 'overdue', 'overview', 'recent_activity', 'tasks_by_priority', 'tasks_by_status', 'user_productivity']
+GET    /reports/user/1 -> 200 ['statistics', 'user']
+GET    /reports/user/999 -> 404 ['error']
+GET    /categories -> 200 list[4]
+POST   /categories -> 201 ['color', 'created_at', 'description', 'id', 'name']
+PUT    /categories/5 -> 200 ['color', 'created_at', 'description', 'id', 'name']
+DELETE /categories/5 -> 200 ['message']
+DELETE /categories/999 -> 404 ['error']
+
+## Verificações extras
+POST   /tasks -> 400 ['error']
+POST   /tasks -> 400 ['error']
+GET    /tasks/search?priority=abc -> 400 ['error']
+PUT    /categories/1 -> 400 ['error']
+POST   /login -> 200 ['message', 'token', 'user']
+{'message': 'Login realizado com sucesso', 'token': 'eyJ1c2VyX2lk...', 'user': {'active': True, 'created_at': '2026-10-22 21:43:50.717332', 'email': 'joao@email.com', 'id': 1, 'name': 'Jo�o Silva', 'role': 'admin'}}
+DELETE /users/2 -> 200 ['message']
+GET    /users/2/tasks -> 404 ['error']
+DELETE /categories/3 -> 200 ['message']
+GET    /tasks/3 -> 200 ['category_id', 'created_at', 'description', 'due_date', 'id', 'overdue', 'priority', 'status', 'tags', 'title', 'updated_at', 'user_id']
+None
+
+## Bodies de 11 GETs: código original x refatorado (timestamps normalizados)
+IDÊNTICOS
+
+## Diff de chaves contra a baseline
+16c16
+< GET    /users/1 200 ['active', 'created_at', 'email', 'id', 'name', 'password', 'role', 'tasks']
+---
+> GET    /users/1 200 ['active', 'created_at', 'email', 'id', 'name', 'role', 'tasks']
+19c19
+< POST   /users 201 ['active', 'created_at', 'email', 'id', 'name', 'password', 'role']
+---
+> POST   /users 201 ['active', 'created_at', 'email', 'id', 'name', 'role']
+22c22
+< PUT    /users/4 200 ['active', 'created_at', 'email', 'id', 'name', 'password', 'role']
+---
+> PUT    /users/4 200 ['active', 'created_at', 'email', 'id', 'name', 'role']

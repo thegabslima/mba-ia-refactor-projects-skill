@@ -96,13 +96,12 @@ Description: `except:` sem tipo engole qualquer erro; não há error handler no 
 Impact: Falhas escondidas e respostas inconsistentes.
 Recommendation: P8 - handler central.
 
-### [MEDIUM] AP-16 Integridade ao excluir categoria/usuário
-File: routes/report_routes.py:211-223
-File: models/task.py:13-14
+### [MEDIUM] AP-16 Integridade tratada na rota em vez do model
 File: routes/user_routes.py:140-145
-Description: Excluir categoria deixa tasks com `category_id` pendurado; exclusão de usuário apaga tasks manualmente na rota em vez de cascade no model.
-Impact: Referências inválidas.
-Recommendation: P11 - cascade/ON DELETE SET NULL no model.
+File: models/task.py:13-14
+Description: A exclusão de usuário apaga as tasks manualmente dentro da rota; o model não declara cascade, então qualquer exclusão fora dessa rota deixa tasks órfãs.
+Impact: Integridade depende de quem lembra de chamar a rota correta.
+Recommendation: P11 - `cascade='all, delete-orphan'` na relação User.tasks.
 
 ### [MEDIUM] DEP-1 API deprecated: `Query.get()` (SQLAlchemy 2.x)
 File: routes/task_routes.py:42, 51, 67, 117, 122, 158, 188, 195, 227
