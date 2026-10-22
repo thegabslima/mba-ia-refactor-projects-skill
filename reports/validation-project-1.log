@@ -1,0 +1,102 @@
+# Projeto 1 - validação pós-refatoração (python app.py, ADMIN_TOKEN=tok123)
+
+## Boot
+2026-10-22 18:38:33,399 INFO __main__: Servidor em http://127.0.0.1:5000 (debug=False)
+ * Serving Flask app 'app'
+ * Debug mode: off
+2026-10-22 18:38:33,448 INFO werkzeug: WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+
+## Endpoints
+GET    / -> 200 ['endpoints', 'mensagem', 'versao']
+GET    /health -> 200 ['ambiente', 'counts', 'database', 'status', 'versao']
+GET    /produtos -> 200 ['dados', 'sucesso']
+GET    /produtos/1 -> 200 ['dados', 'sucesso']
+GET    /produtos/999 -> 404 ['erro', 'sucesso']
+GET    /produtos/busca?q=mouse -> 200 ['dados', 'sucesso', 'total']
+GET    /produtos/busca?categoria=moveis&preco_min=10&preco_max=5000 -> 200 ['dados', 'sucesso', 'total']
+POST   /produtos -> 201 ['dados', 'mensagem', 'sucesso']
+POST   /produtos -> 400 ['erro', 'sucesso']
+POST   /produtos -> 400 ['erro', 'sucesso']
+PUT    /produtos/11 -> 200 ['mensagem', 'sucesso']
+PUT    /produtos/999 -> 404 ['erro', 'sucesso']
+DELETE /produtos/11 -> 200 ['mensagem', 'sucesso']
+DELETE /produtos/999 -> 404 ['erro', 'sucesso']
+GET    /usuarios -> 200 ['dados', 'sucesso']
+GET    /usuarios/1 -> 200 ['dados', 'sucesso']
+GET    /usuarios/999 -> 404 ['erro', 'sucesso']
+POST   /usuarios -> 201 ['dados', 'sucesso']
+POST   /usuarios -> 400 ['erro', 'sucesso']
+POST   /login -> 200 ['dados', 'mensagem', 'sucesso']
+POST   /login -> 401 ['erro', 'sucesso']
+POST   /login -> 200 ['dados', 'mensagem', 'sucesso']
+POST   /login -> 401 ['erro', 'sucesso']
+POST   /pedidos -> 201 ['dados', 'mensagem', 'sucesso']
+POST   /pedidos -> 400 ['erro', 'sucesso']
+POST   /pedidos -> 400 ['erro', 'sucesso']
+POST   /pedidos -> 400 ['erro', 'sucesso']
+GET    /pedidos -> 200 ['dados', 'sucesso']
+GET    /pedidos/usuario/2 -> 200 ['dados', 'sucesso']
+PUT    /pedidos/1/status -> 200 ['mensagem', 'sucesso']
+PUT    /pedidos/1/status -> 400 ['erro', 'sucesso']
+GET    /relatorios/vendas -> 200 ['dados', 'sucesso']
+POST   /admin/query -> 403 ['erro', 'sucesso']
+POST   /admin/reset-db -> 403 ['erro', 'sucesso']
+
+## Verificações extras (segurança)
+GET    /usuarios/1 -> 200 ['dados', 'sucesso']
+{'dados': {'criado_em': '2026-10-22 21:38:33', 'email': 'admin@loja.com', 'id': 1, 'nome': 'Admin', 'tipo': 'admin'}, 'sucesso': True}
+POST   /admin/query -> 200 ['dados', 'sucesso']
+POST   /admin/query -> 400 ['erro', 'sucesso']
+POST   /admin/query -> 400 ['erro', 'sucesso']
+POST   /admin/reset-db -> 403 ['erro', 'sucesso']
+POST   /pedidos -> 400 ['erro', 'sucesso']
+GET    /pedidos/usuario/2 -> 200 ['dados', 'sucesso']
+{"dados": [{"criado_em": "2026-10-22 21:38:35", "id": 1, "itens": [{"preco_unitario": 5999.99, "produto_id": 1, "produto_nome": "Notebook Gamer", "quantidade": 1}, {"preco_unitario": 89.9, "produto_id": 2, "produto_nome": "Mouse Wireless", "quantidade": 2}], "status": "aprovado", "total": 6179.79, "
+POST   /usuarios -> 409 ['erro', 'sucesso']
+POST   /admin/reset-db -> 200 ['mensagem', 'sucesso']
+
+## Diff contra a baseline (antes -> depois)
+2c2
+< GET    /health 200 ['ambiente', 'counts', 'database', 'db_path', 'debug', 'secret_key', 'status', 'versao']
+---
+> GET    /health 200 ['ambiente', 'counts', 'database', 'status', 'versao']
+9,10c9,10
+< POST   /produtos 400 ['erro']
+< POST   /produtos 400 ['erro']
+---
+> POST   /produtos 400 ['erro', 'sucesso']
+> POST   /produtos 400 ['erro', 'sucesso']
+12c12
+< PUT    /produtos/999 404 ['erro']
+---
+> PUT    /produtos/999 404 ['erro', 'sucesso']
+14c14
+< DELETE /produtos/999 404 ['erro']
+---
+> DELETE /produtos/999 404 ['erro', 'sucesso']
+17c17
+< GET    /usuarios/999 404 ['erro']
+---
+> GET    /usuarios/999 404 ['erro', 'sucesso']
+19c19
+< POST   /usuarios 400 ['erro']
+---
+> POST   /usuarios 400 ['erro', 'sucesso']
+23c23
+< POST   /login 200 ['dados', 'mensagem', 'sucesso']
+---
+> POST   /login 401 ['erro', 'sucesso']
+27c27
+< POST   /pedidos 400 ['erro']
+---
+> POST   /pedidos 400 ['erro', 'sucesso']
+31c31
+< PUT    /pedidos/1/status 400 ['erro']
+---
+> PUT    /pedidos/1/status 400 ['erro', 'sucesso']
+33,34c33,34
+< POST   /admin/query 200 ['dados', 'sucesso']
+< POST   /admin/reset-db 200 ['mensagem', 'sucesso']
+---
+> POST   /admin/query 403 ['erro', 'sucesso']
+> POST   /admin/reset-db 403 ['erro', 'sucesso']
