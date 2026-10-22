@@ -1,0 +1,36 @@
+# Projeto 2 - validação pós-refatoração (npm start, ADMIN_TOKEN=tok123)
+
+## Boot + logs
+2026-10-22T21:40:16.254Z [INFO] Frankenstein LMS rodando na porta 3000...
+2026-10-22T21:40:17.165Z [INFO] Processando cartão final 4444 no valor de 497
+2026-10-22T21:40:17.255Z [INFO] Checkout concluído: curso 2, usuário 2
+2026-10-22T21:40:17.275Z [INFO] Processando cartão final 4444 no valor de 997
+2026-10-22T21:40:17.282Z [INFO] Processando cartão final 4000 no valor de 997
+2026-10-22T21:40:17.283Z [INFO] Checkout concluído: curso 1, usuário 1
+2026-10-22T21:40:17.309Z [INFO] Usuário 1 removido (matrículas e pagamentos em cascata)
+
+## Endpoints
+POST   /api/checkout -> 200 ['enrollment_id', 'msg']
+POST   /api/checkout -> 400 text:Pagamento recusado
+POST   /api/checkout -> 200 ['enrollment_id', 'msg']
+POST   /api/checkout -> 400 text:Bad Request
+POST   /api/checkout -> 404 text:Curso n�o encontrado
+GET    /api/admin/financial-report -> 403 text:Acesso negado
+GET    /api/admin/financial-report -> 200 list[2]
+[{"course": "Clean Architecture", "revenue": 1994, "students": [{"student": "Leonan", "paid": 997}, {"student": "Leonan", "paid": 997}]}, {"course": "Docker", "revenue": 497, "students": [{"student": "Guilherme", "paid": 497}]}]
+DELETE /api/users/1 -> 403 text:Acesso negado
+DELETE /api/users/1 -> 200 text:Usu�rio deletado
+GET    /api/admin/financial-report -> 200 list[2]
+[{"course": "Clean Architecture", "revenue": 0, "students": []}, {"course": "Docker", "revenue": 497, "students": [{"student": "Guilherme", "paid": 497}]}]
+
+## Baseline (antes)
+POST   /api/checkout -> 200 ['enrollment_id', 'msg']
+POST   /api/checkout -> 400 text:Pagamento recusado
+POST   /api/checkout -> 200 ['enrollment_id', 'msg']
+POST   /api/checkout -> 400 text:Bad Request
+POST   /api/checkout -> 404 text:Curso n�o encontrado
+GET    /api/admin/financial-report -> 200 list[2]
+[{"course": "Docker", "revenue": 497, "students": [{"student": "Guilherme", "paid": 497}]}, {"course": "Clean Architecture", "revenue": 1994, "students": [{"student": "Leonan", "paid": 997}, {"student": "Leonan", "paid": 997}]}]
+DELETE /api/users/1 -> 200 text:Usu�rio deletado, mas as matr�culas e pa
+GET    /api/admin/financial-report -> 200 list[2]
+[{"course": "Docker", "revenue": 497, "students": [{"student": "Guilherme", "paid": 497}]}, {"course": "Clean Architecture", "revenue": 1994, "students": [{"student": "Unknown", "paid": 997}, {"student": "Unknown", "paid": 997}]}]
